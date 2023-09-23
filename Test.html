@@ -1,0 +1,450 @@
+<!DOCTYPE html>   
+<html> 
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Fetch-Test</title> 
+<style>
+@font-face {
+    font-family: Aster-Reg;
+    src: url("fonts/aster-regc10.woff2") format("woff2");
+}
+@font-face {
+    font-family: Aster-Ita;
+    src: url("fonts/aster-regita.otf") format("opentype");
+}
+@font-face {
+    font-family: Aster-Med;
+    src: url("fonts/aster-med.otf") format("opentype");
+}
+@font-face {
+    font-family: Greciliae;
+    src: url("fonts/greciliae.ttf") format("truetype");
+}
+@font-face {
+    font-family: Greextra;
+    src: url("fonts/greextra.ttf") format("truetype");
+}
+@font-face {
+    font-family: Libertinus;
+    src: url("fonts/libertinusserif-regular.otf") format("opentype");
+}
+.Ast {font-family: Aster-Reg; font-size: .6em}
+.Bst {font-family: Aster-Reg; font-size: 2.4em}
+.Gre {font-family: Greciliae; font-size: 1.6em}
+
+.Ext {font-family: Greextra; font-size: .6em}
+
+body {
+    font-family: Aster-Reg;
+  scrollbar-color: #007 #fffaf0;
+}
+
+tspan {
+    font-family: Aster-Ita;
+}
+
+h1 {
+  font-size: .8rem;
+  font-family: Aster-Reg;
+  text-align: center;
+}
+h2 {
+  font-size: .6rem;
+  font-family: Aster-Med;
+  text-align: center;
+}
+@media (orientation: landscape) {
+#svg-container {
+  margin: 2vw;
+  padding: 0vw;
+  height: 90vh;
+  column-count: auto;
+  column-width: 40vw;
+  column-gap: 8vw;
+  column-rule-style: solid;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: scroll;
+  scrollbar-color: #007 #fffaf0;
+}
+}
+@media (orientation: portrait) {
+#svg-container {
+  margin: 5vw;
+  padding: 0vw;
+  height: 90vh;
+  column-count: auto;
+  column-width: 80vw;
+  column-gap: 15vw;
+  column-rule-style: solid;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: scroll;
+}
+}
+.scroll {
+    position: relative;
+    top: 0px;
+    height: 4px;
+    width: 4px;
+    background-color: #fffaf0;
+    background-color: white;
+    scroll-snap-align: start;
+}
+
+.normal {
+    font-family: Aster-Reg;
+    font-size: .6rem;
+}
+.normal > p {
+    display: inline-block;
+    font-size: .6rem;
+    text-indent: -20px;
+    padding-left: 20px;
+    padding-bottom: 0;
+    padding-top: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: justify;
+    text-justify: inter-word;
+}
+.revpara > p {
+    font-size: .6rem;
+    text-indent: 20px hanging;
+    padding-bottom: 0;
+    padding-top: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.itpara {
+    font-size: .6rem;
+    font-family: Aster-Ita;
+}
+.redsc {
+    font-family: Libertinus;
+    font-variant: small-caps;
+    color: red;
+    font-size: .6rem;
+    margin-bottom: .4rem;
+    break-after: avoid;
+}
+
+.redcntr {
+    color: red;
+    text-align: center;
+    font-size: .6rem;
+    margin-top: .4rem;
+    margin-bottom: .4rem;
+    break-after: avoid;
+}
+.blackit {
+    font-family: Aster-Ita;
+    font-size: .6rem
+}
+.tinyred {
+    color: red;
+    vertical-align: super;
+    font-size: .4rem;
+}
+.ctleft {
+    width: 33.33333%;
+    text-align: left;
+}
+.ctcntr {
+    color: red;
+    text-align: center;
+    font-size: .6rem;
+    width: 33.33334%;
+}
+.ctright {
+    color: red;
+    text-align: right;
+    font-size: .6rem;
+    width: 33.33333%;
+}
+.ctflex {
+    font-family: Libertinus;
+    display: flex;
+    font-variant: small-caps;
+    width: 100%;
+    margin-bottom: .4rem;
+    break-after: avoid;
+}
+.scleft {
+    width: 33.33333%;
+    text-align: left;
+    font-variant: small-caps;
+}
+.sccntr {
+    text-align: center;
+    width: 33.33334%;
+}
+.scright {
+    text-align: right;
+    width: 33.33333%;
+}
+.scflex {
+    display: flex;
+    width: 100%;
+    margin-bottom: .4rem;
+    font-family: Libertinus;
+    color: red;
+    font-size: .6rem;
+    break-after: avoid;
+}
+.para > p{
+    text-indent: 20px;
+    font-size: .6rem;
+}
+.revpara > p {
+    text-indent: -20px;
+    padding-left: 20px;
+    font-size: .6rem;
+}
+</style>
+<script>
+jsons = [];
+function renderSvgs(){
+    for(var s = 0;s<jsons.length; s++){
+      var dvi = jsons[s][0];
+      var div = jsons[s][1];
+      divs = "s" + div;
+      var svgs = document.getElementById(divs).getElementsByClassName("greg");
+      var nosvgs = svgs.length;
+      for (var v = 0; v < nosvgs; v++) {
+          document.getElementById(divs).removeChild(svgs[0]);
+      }
+    renderSvg(dvi,div);
+    }
+var clientWidth = document.getElementById("svg-container").clientWidth;
+var scrollWidth = document.getElementById("svg-container").scrollWidth;
+      var scrolls = document.getElementById("svg-container").getElementsByClassName("scroll");
+      var noscrolls = scrolls.length;
+      for (var v = 0; v < noscrolls; v++) {
+          document.getElementById("svg-container").removeChild(scrolls[0]);
+      }
+      for (var v = 0; v < 1+Math.ceil(scrollWidth/clientWidth); v++) {
+         var scrollDiv = document.createElement("div");
+         scrollDiv.className = "scroll";
+         scrollDiv.style.left = (v * 101.5) + "vw";
+         document.getElementById("svg-container").prepend(scrollDiv);
+      }
+
+}
+function addScrolls() {
+      var clientWidth = document.getElementById("svg-container").clientWidth;
+      var scrollWidth = document.getElementById("svg-container").scrollWidth;
+      var scrolls = document.getElementById("svg-container").getElementsByClassName("scroll");
+      var noscrolls = scrolls.length;
+      for (var v = 0; v < noscrolls; v++) {
+          document.getElementById("svg-container").removeChild(scrolls[0]);
+      }
+      for (var v = 0; v < 1+Math.ceil(scrollWidth/clientWidth); v++) {
+         var scrollDiv = document.createElement("div");
+         scrollDiv.className = "scroll";
+         scrollDiv.style.left = (v * 101.5) + "vw";
+         document.getElementById("svg-container").prepend(scrollDiv);
+      }
+}
+function renderSvg(dvi,div) {
+    div = "s" + div;
+    //lw = .4 * visualViewport.width;
+    if(visualViewport.width > visualViewport.height){
+      lw = .4 * visualViewport.width;
+    } else {
+      lw = .8 * visualViewport.width;
+    }
+    if (false) {
+        var svgs = document.getElementById("s" + s).getElementsByClassName("greg");
+        var nosvgs = svgs.length;
+        for (var v = 0; v < nosvgs; v++) {
+            document.getElementById("s" + s).removeChild(svgs[0]);
+        }
+    }
+    var i = 0;
+    var _i = 0;
+    var line, font, x, _x, y, nexty, linebreak, linewidth, no, breaks, offset, t, _t;
+    linewidth = lw;
+    breaks = [];
+    x = 0;
+    _x = 0;
+    offset = 0;
+    while (i < dvi.posns.length) {
+        linebreak = false;
+        no = 0;
+        while (!linebreak) {
+            line = dvi.posns[i];
+            if (57 == line[0]){
+              t = i;
+              if(0 > dvi.posns[t][5] && dvi.posns[t][6].endsWith("-")){
+                dvi.posns[t][6] = dvi.posns[t][6].slice(0,-1);
+              }
+            }
+            if (2 == line[5] || -2 == line[5]) {
+                x = line[3] - offset;
+                if (i == dvi.posns.length - 1 || x > linewidth - 8) {
+                    linebreak = true;
+                    breaks.push([_i + 1, offset, (linewidth - 8 - _x) / (no - 1)]);
+                    offset += _x - 8;
+                    if(0 > dvi.posns[_t][5]){
+                      dvi.posns[_t][6] += '-';
+                    }
+                }
+                _i = i;
+                _x = x;
+                _t = t;
+            } else if (1 == Math.abs(line[5])) {
+                no += 1;
+            }
+            i += 1;
+        }
+    }
+    var start = 0;
+    for (let i = 0; i < breaks.length; i++) {
+        var end = breaks[i][0];
+        var off = breaks[i][1];
+        var add = breaks[i][2];
+        var len = linewidth + 5;
+        if (i == 0) {
+            var ind = dvi.indent;
+            len -= ind;
+        } else {
+            ind = 0;
+        }
+        if (i == breaks.length - 1) {
+            term = true;
+            add = 0;
+            end = dvi.posns.length;
+        } else {
+            var term = false;
+        }
+        svg = makeSvg(dvi.posns.slice(start, end), off, dvi.vPosns, len, ind, term, add);
+        var container = document.getElementById(div);
+        container.innerHTML += svg;
+        start = end;
+    }
+}
+function makeSvg(s, o, v, l, e, t, a) {
+    var le = l + e;
+    var svg = "";
+    svg += "<svg class='greg' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='58.034' viewBox='0 0 " + le +" 58.034' version='1.2'>\n"
+    for (st = 0; st<4; st++){
+      svg += "<path style='stroke-width: .388; stroke:rgb(0%,0%,0%);' d='M 0 0 L " + l + " 0 ' transform='matrix(.993925,0,0,-0.993925," + e + "," + dvi.stafflines[st] + ")'/>\n"
+    }
+    if (0 == e) {
+        svg += "<text class='Gre' x='0' y='" + v[dvi.clef[0] - 1] + "'>&#" + dvi.clef[1] + ";</text>\n";
+    }
+    var add = 0;
+    for (i = 0; i < s.length; i++) {
+        var item = s[i];
+        var svgLine = "";
+        svgLine += "<text class='"
+        switch (item[0]) {
+            case 69:
+                svgLine += "Bst' ";
+                break;
+            case 57:
+                svgLine += "Ast' ";
+                break;
+            case 53:
+                svgLine += "Ext' ";
+                break;
+            case 50:
+                svgLine += "Gre' ";
+                break;
+        }
+        if (1 == item[5]) {
+            add += a;
+        }
+        svgLine += "x='" + (item[1] + add - o) + "' ";
+        svgLine += "y='" + v[item[2] - 1] + "'>";
+        if (50 == item[0] || 53 == item[0]) {
+            svgLine += "&#" + item[6] + ";";
+        } else {
+            svgLine += item[6];
+        }
+        svgLine += "</text>\n";
+        svg += svgLine;
+    }
+    if (!t) {
+        if (0 != e) {
+//            l += dvi.indent;
+            l += e;
+        }
+        svg += "<text class='Gre' x='" + (l - 4) + "' y='" + v[item[4] - 1] + "'>&#57361;</text>\n";
+    }
+    svg += "\n</svg>";
+    return svg;
+}
+jsons = [];
+async function fetch_json(src,div){
+var response = await fetch(src);
+dvi = await response.json();
+jsons.push([dvi,div]);
+renderSvg(dvi,div);
+NoOfDivs += 1;
+if(NoOfDivs == 12){
+   addScrolls();
+}
+}
+async function fetch_html(src,div){
+var response = await fetch(src);
+htmlcode = await response.text();
+document.getElementById("s" + div).innerHTML += htmlcode;
+NoOfDivs += 1;
+if(NoOfDivs == 12){
+   addScrolls();
+}
+}
+</script>
+</head> 
+<body onresize="renderSvgs()">  
+<script>NoOfDivs = 0</script>
+<script>fetch_json("3_1.json",0)</script>
+<script>fetch_json("1A1_1V_1.json",1)</script>
+<script>fetch_html("1H1_1V_1.html",2)</script>
+<script>fetch_json("1A1_1V_2.json",3)</script>
+<script>fetch_html("1H1_1V_2.html",4)</script>
+<script>fetch_json("1A1_1V_3.json",5)</script>
+<script>fetch_html("1H1_1V_3a.html",6)</script>
+<script>fetch_html("1A1_1V_4.html",7)</script>
+<script>fetch_json("AdvH1_Va.json",8)</script>
+<script>fetch_json("1A1_1V_M.json",9)</script>
+<script>fetch_html("1A1_1V_5.html",10)</script>
+<script>fetch_html("1A1_1V_6.html",11)</script>
+<div id="svg-container">
+<h1>DOMINICA I ADVENTUS</h1>
+<h2>Ad I Vesperas</h2>
+<div class="redsc">Hymnus</div>
+<div id="s0">
+</div>
+<div class="redsc">Psalmodia</div>
+<div class="redcntr">Antiphona 1</div>
+<div id="s1">
+</div>
+<div id="s2">
+</div>
+<div class="redcntr">Antiphona 2</div>
+<div id="s3">
+</div>
+<div id="s4">
+</div>
+<div class="redcntr">Antiphona 3</div>
+<div id="s5">
+</div>
+<div id="s6">
+</div>
+<div id="s7">
+</div>
+<div class="redsc">Responsorium breve</div>
+<div id="s8">
+</div>
+<div class="redcntr">Antiphona ad Magnificat</div>
+<div id="s9">
+</div>
+<div id="s10">
+</div>
+<div id="s11">
+</div>
+</body>
+</html> 
